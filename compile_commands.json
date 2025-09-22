@@ -1,0 +1,40 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-g",
+      "-O0",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Wno-strict-prototypes",
+      "-c",
+      "-o",
+      "build/compiler.o",
+      "compiler.c"
+    ],
+    "directory": "/home/jerbot/c/clox",
+    "file": "/home/jerbot/c/clox/compiler.c",
+    "output": "/home/jerbot/c/clox/build/compiler.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-g",
+      "-O0",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Wno-strict-prototypes",
+      "-c",
+      "-o",
+      "build/vm.o",
+      "vm.c"
+    ],
+    "directory": "/home/jerbot/c/clox",
+    "file": "/home/jerbot/c/clox/vm.c",
+    "output": "/home/jerbot/c/clox/build/vm.o"
+  }
+]
