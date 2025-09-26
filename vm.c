@@ -1,14 +1,18 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
+
 #include "chunk.h"
+#include "memory.h"
 #include "common.h"
 #include "compiler.h"
 #include "debug.h"
+#include "object.h"
 #include "value.h"
 #include "vm.h"
 
-VM vm; 
+VM vm;
 
 static void resetStack() {
     vm.stackTop = vm.stack;
@@ -29,9 +33,11 @@ static void runtimeError(const char* format, ...) {
 
 void initVM() {
     resetStack();
+    vm.objects = NULL;
 }
 
 void freeVM() {
+    freeObjects();
 }
 
 void push(Value value) {
@@ -56,6 +62,20 @@ Value top() {
 
 Value* top_mut() {
     return &vm.stackTop[-1];
+}
+
+static inline void concatenate() {
+    ObjString* b = stringFrom(pop());
+    ObjString* a = stringFrom(pop());
+
+    u32 length = a->length + b->length;
+    char* chars = ALLOCATE(char, length+1);
+    memcpy(chars, a->chars, a->length);
+    memcpy(chars + a->length, b->chars, b->length);
+    chars[length] = '\0';
+
+    ObjString* result = takeString(chars, length);
+    push(OBJ_VAL(result));
 }
 
 static InterpretResult run() {
@@ -103,7 +123,19 @@ static InterpretResult run() {
             }
             case OP_LESS:       BINARY_OP(BOOL_VAL, <);   break;
             case OP_GREATER:    BINARY_OP(BOOL_VAL, >);   break;
-            case OP_ADD:        BINARY_OP(NUMBER_VAL, +);   break;
+            case OP_ADD: {
+                if (isObjType(peek(0), OBJ_STRING) && isObjType(peek(1), OBJ_STRING)) {
+                    concatenate();
+                } else if (peek(0).type == VAL_NUMBER && peek(1).type == VAL_NUMBER) {
+                    f64 b = pop().as.number;
+                    f64 a = pop().as.number;
+                    push(NUMBER_VAL(a+b));
+                } else {
+                    runtimeError("Operands must be two numbers or two strings.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                break;
+            }
             case OP_SUBTRACT:   BINARY_OP(NUMBER_VAL, -);   break;
             case OP_MULTIPLY:   BINARY_OP(NUMBER_VAL, *);   break;
             case OP_DIVIDE:     BINARY_OP(NUMBER_VAL, /);   break;

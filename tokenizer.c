@@ -144,8 +144,9 @@ static Token skipWhitespace() {
 }
 
 static Token scanString() {
-    for (char c = peek(); c != '"' && c != '\0'; c = eat()) {
+    for (char c = peek(); c != '"' && c != '\0'; c = peek()) {
         if (c == '\n') tokenizer.line++;
+        eat();
     }
 
     if (peek() == '\0') 
@@ -206,7 +207,7 @@ static TokenType identifierType() {
 }
 
 static Token scanIdentifier() {
-    while (isAlpha(peek()) || isDigit(peek())) eat();
+    while (isAlphaNumeric(peek())) eat();
     return makeToken(identifierType());
 }
 

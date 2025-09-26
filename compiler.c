@@ -7,6 +7,7 @@
 #include "common.h"
 #include "compiler.h"
 #include "tokenizer.h"
+#include "value.h"
 
 #ifdef DEBUG_PRINT_CODE
 #include "debug.h"
@@ -118,13 +119,13 @@ static void emitReturn() {
 }
 
 static u8 makeConstant(Value value) {
-    u32 constant = addConstant(currentChunk(), value);
-    if (constant > U8_MAX) {
+    u32 constIndex = addConstant(currentChunk(), value);
+    if (constIndex > U8_MAX) {
         error("Too many constants in one chunk.");
         return 0;
     }
 
-    return (u8)constant;
+    return (u8)constIndex;
 }
 
 static void emitConstant(Value value) {
@@ -206,6 +207,11 @@ static void compileNumber() {
     emitConstant(NUMBER_VAL(value));
 }
 
+static void compileString() {
+    emitConstant(OBJ_VAL(copyString(parser.previous.start+1,
+                                    parser.previous.length-2)));
+}
+
 static void compileUnary() {
     TokenType tok = parser.previous.type;
     parsePrecedence(PREC_UNARY); // compile the operand
@@ -273,7 +279,7 @@ ParseRule rules[] = {
   [TOKEN_PRINT]         = {NULL,            NULL,           PREC_NONE},
   [TOKEN_IDENTIFIER]    = {NULL,            NULL,           PREC_NONE},
   [TOKEN_NUMBER]        = {compileNumber,   NULL,           PREC_NONE},
-  [TOKEN_STRING]        = {NULL,            NULL,           PREC_NONE},
+  [TOKEN_STRING]        = {compileString,   NULL,           PREC_NONE},
   [TOKEN_LIST]          = {NULL,            NULL,           PREC_NONE},
   [TOKEN_ERROR]         = {NULL,            NULL,           PREC_NONE},
   [TOKEN_NAT]           = {NULL,            NULL,           PREC_NONE},
