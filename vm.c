@@ -34,9 +34,11 @@ static void runtimeError(const char* format, ...) {
 void initVM() {
     resetStack();
     vm.objects = NULL;
+    initHashTable(&vm.strings);
 }
 
 void freeVM() {
+    freeHashTable(&vm.strings);
     freeObjects();
 }
 

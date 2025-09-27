@@ -1,5 +1,5 @@
-#ifndef run_table_h
-#define run_table_h
+#ifndef clox_run_table_h
+#define clox_run_table_h
 
 #include "common.h"
 
