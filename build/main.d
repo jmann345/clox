@@ -1,5 +1,5 @@
 build/main.o: main.c common.h types.h chunk.h value.h run_table.h debug.h \
- vm.h
+ vm.h hash_table.h
 common.h:
 types.h:
 chunk.h:
@@ -7,3 +7,4 @@ value.h:
 run_table.h:
 debug.h:
 vm.h:
+hash_table.h:

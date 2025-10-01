@@ -11,25 +11,6 @@
       "-Wno-strict-prototypes",
       "-c",
       "-o",
-      "build/chunk.o",
-      "chunk.c"
-    ],
-    "directory": "/home/jerbot/c/clox",
-    "file": "/home/jerbot/c/clox/chunk.c",
-    "output": "/home/jerbot/c/clox/build/chunk.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/cc",
-      "-g",
-      "-O0",
-      "-std=c99",
-      "-Wall",
-      "-Wextra",
-      "-Wpedantic",
-      "-Wno-strict-prototypes",
-      "-c",
-      "-o",
       "build/compiler.o",
       "compiler.c"
     ],
@@ -55,6 +36,25 @@
     "directory": "/home/jerbot/c/clox",
     "file": "/home/jerbot/c/clox/debug.c",
     "output": "/home/jerbot/c/clox/build/debug.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-g",
+      "-O0",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Wno-strict-prototypes",
+      "-c",
+      "-o",
+      "build/hash_table.o",
+      "hash_table.c"
+    ],
+    "directory": "/home/jerbot/c/clox",
+    "file": "/home/jerbot/c/clox/hash_table.c",
+    "output": "/home/jerbot/c/clox/build/hash_table.o"
   },
   {
     "arguments": [
@@ -112,63 +112,6 @@
     "directory": "/home/jerbot/c/clox",
     "file": "/home/jerbot/c/clox/object.c",
     "output": "/home/jerbot/c/clox/build/object.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/cc",
-      "-g",
-      "-O0",
-      "-std=c99",
-      "-Wall",
-      "-Wextra",
-      "-Wpedantic",
-      "-Wno-strict-prototypes",
-      "-c",
-      "-o",
-      "build/run_table.o",
-      "run_table.c"
-    ],
-    "directory": "/home/jerbot/c/clox",
-    "file": "/home/jerbot/c/clox/run_table.c",
-    "output": "/home/jerbot/c/clox/build/run_table.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/cc",
-      "-g",
-      "-O0",
-      "-std=c99",
-      "-Wall",
-      "-Wextra",
-      "-Wpedantic",
-      "-Wno-strict-prototypes",
-      "-c",
-      "-o",
-      "build/tokenizer.o",
-      "tokenizer.c"
-    ],
-    "directory": "/home/jerbot/c/clox",
-    "file": "/home/jerbot/c/clox/tokenizer.c",
-    "output": "/home/jerbot/c/clox/build/tokenizer.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/cc",
-      "-g",
-      "-O0",
-      "-std=c99",
-      "-Wall",
-      "-Wextra",
-      "-Wpedantic",
-      "-Wno-strict-prototypes",
-      "-c",
-      "-o",
-      "build/value.o",
-      "value.c"
-    ],
-    "directory": "/home/jerbot/c/clox",
-    "file": "/home/jerbot/c/clox/value.c",
-    "output": "/home/jerbot/c/clox/build/value.o"
   },
   {
     "arguments": [

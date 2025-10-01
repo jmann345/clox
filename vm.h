@@ -12,6 +12,7 @@ typedef struct {
     u8* ip;  // instruction pointer
     Value stack[STACK_MAX];
     Value* stackTop;
+    HashTable globals;
     HashTable strings;
     Obj* objects;
 } VM;

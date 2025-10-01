@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "chunk.h"
+#include "hash_table.h"
 #include "memory.h"
 #include "common.h"
 #include "compiler.h"
@@ -34,10 +35,12 @@ static void runtimeError(const char* format, ...) {
 void initVM() {
     resetStack();
     vm.objects = NULL;
+    initHashTable(&vm.globals);
     initHashTable(&vm.strings);
 }
 
 void freeVM() {
+    freeHashTable(&vm.globals);
     freeHashTable(&vm.strings);
     freeObjects();
 }
@@ -83,6 +86,7 @@ static inline void concatenate() {
 static InterpretResult run() {
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
+#define READ_STRING() (stringFrom(READ_CONSTANT()))
 #define BINARY_OP(valueType, op) \
     do { \
         if (peek(0).type != VAL_NUMBER || peek(1).type != VAL_NUMBER) { \
@@ -114,9 +118,34 @@ static InterpretResult run() {
                 printf("\n");
                 break;
             }
-            case OP_NIL:        push(NIL_VAL);              break;
-            case OP_TRUE:       push(BOOL_VAL(true));       break;
-            case OP_FALSE:      push(BOOL_VAL(false));      break;
+            case OP_NIL:    push(NIL_VAL); break;
+            case OP_TRUE:   push(BOOL_VAL(true)); break;
+            case OP_FALSE:  push(BOOL_VAL(false)); break;
+            case OP_POP:    pop(); break;
+            case OP_GET_GLOBAL: {
+                ObjString* name = READ_STRING();
+                GetResult result = hashTableGet(&vm.globals, name);
+                if (!result.found) {
+                    runtimeError("Undefined variable '%s'.", name->chars);
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                push(result.value);
+                break;
+            }
+            case OP_DEFINE_GLOBAL: {
+                ObjString* name = READ_STRING();
+                hashTableSet(&vm.globals, name, pop());
+                break;
+            }
+            case OP_SET_GLOBAL: {
+                ObjString* name = READ_STRING();
+                if (hashTableSet(&vm.globals, name, top())) {
+                    hashTableDelete(&vm.globals, name);
+                    runtimeError("Undefined variable '%s'.", name->chars);
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+                break;
+            }
             case OP_EQUAL: {
                 Value rhs = pop();
                 Value lhs = pop();
@@ -160,14 +189,19 @@ static InterpretResult run() {
                 break;
             }
             case OP_RETURN: {
+                // Exit interpreter.
+                return INTERPRET_OK;
+            }
+            case OP_PRINT: {
                 printValue(pop());
                 printf("\n");
-                return INTERPRET_OK;
+                break;
             }
         }
     }
 #undef READ_BYTE
 #undef READ_CONSTANT
+#undef READ_STRING
 #undef BINARY_OP
 }
 

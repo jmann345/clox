@@ -79,7 +79,7 @@ bool hashTableSet(HashTable* table, ObjString* key, Value value) {
     }
     Entry* entry = findEntry(table->entries, table->capacity, key);
     bool isNewKey = entry->key == NULL;
-    if (isNewKey && entry->value.type == VAL_NIL) table->count++;
+    if (isNewKey) table->count++;
 
     entry->key = key;
     entry->value = value;

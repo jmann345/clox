@@ -27,6 +27,7 @@ static ObjString* allocateString(char* chars, u32 length, u32 hash) {
     string->length = length;
     string->chars = chars;
     string->hash = hash;
+    hashTableSet(&vm.strings, string, NIL_VAL);
     return string;
 }
 
@@ -41,16 +42,19 @@ static u32 hashString(const char* key, u32 length) {
 
 ObjString* takeString(char* chars, u32 length) {
     u32 hash = hashString(chars, length);
+    ObjString* interned = hashTableFindString(&vm.strings, chars, length, hash);
+    if (interned != NULL) {
+        FREE_ARRAY(char, chars, length + 1);
+        return interned;
+    }
+
     return allocateString(chars, length, hash);
 }
 
 ObjString* copyString(const char* chars, u32 length) {
     u32 hash = hashString(chars, length);
     ObjString* interned = hashTableFindString(&vm.strings, chars, length, hash);
-    if (interned != NULL) {
-        FREE_ARRAY(char, chars, length + 1);
-        return interned;
-    }
+    if (interned != NULL) return interned;
 
     char* heapChars = ALLOCATE(char, length + 1);
     memcpy(heapChars, chars, length);
